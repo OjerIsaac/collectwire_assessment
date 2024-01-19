@@ -21,7 +21,6 @@ export class DemoService {
                     // console.log('CSV Row:', row);
                     const rowString = Object.values(row).join(",");
                     if (isFirstRow) {
-                        // Add the first row to the beginning of the array
                         csvData.push(Object.keys(row).join(","));
                         isFirstRow = false;
                     }
@@ -78,25 +77,25 @@ export class DemoService {
             if (!file || !file.buffer) {
                 throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
             }
-    
+
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
-    
+
             // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
                     throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-    
+
                 data.forEach((row) => {
                     const numericRow = row.map(Number);
                     csvData.push(numericRow);
                 });
-    
+
                 // Calculate the sum of integers in the matrix
                 const sum = csvData.flat().reduce((acc, val) => acc + val, 0);
-    
+
                 // Resolve with the sum
                 resolve(sum);
                 console.log(`Matrix Output: ${sum}`);
