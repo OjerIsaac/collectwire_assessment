@@ -11,4 +11,4 @@ required to create 5 endpoints based on the task below (/echo, /invert, /flatten
 /multiply)
 
 ## Documentation link
-- The endpoints for test of the service are provided in the [Postman Documentation](https://documenter.getpostman.com/view/25225100/2s93CGQb7m).
+- The endpoints for test of the service are provided in the [Postman Documentation](https://documenter.getpostman.com/view/25225100/2s9YsT68Ho).

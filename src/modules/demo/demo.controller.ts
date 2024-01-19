@@ -19,4 +19,28 @@ export class DemoController {
             statusCode: HttpStatus.OK,
         });
     }
+
+    @Post("multiply")
+    @ApiFile("file")
+    async multiply(@UploadedFile(ParseFile) file: Express.Multer.File, @Res() res: Response) {
+        const result = await this.demoService.multiply(file);
+
+        return res.status(HttpStatus.OK).json({
+            message: "record created successfully",
+            data: result,
+            statusCode: HttpStatus.OK,
+        });
+    }
+
+    @Post("sum")
+    @ApiFile("file")
+    async sum(@UploadedFile(ParseFile) file: Express.Multer.File, @Res() res: Response) {
+        const result = await this.demoService.sum(file);
+
+        return res.status(HttpStatus.OK).json({
+            message: "record created successfully",
+            data: result,
+            statusCode: HttpStatus.OK,
+        });
+    }
 }

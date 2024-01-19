@@ -41,4 +41,66 @@ export class DemoService {
                 });
         });
     }
+
+    async multiply(file: Express.Multer.File): Promise<number> {
+        return new Promise((resolve) => {
+            if (!file || !file.buffer) {
+                throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
+            }
+
+            const csvData: number[][] = [];
+            const fileContent = file.buffer.toString();
+
+            // Parse CSV content
+            parse(fileContent, { cast: true, columns: false }, (err, data) => {
+                if (err) {
+                    console.error("Error parsing CSV content:", err);
+                    throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                data.forEach((row) => {
+                    const numericRow = row.map(Number);
+                    csvData.push(numericRow);
+                });
+
+                // Calculate the product of integers in the matrix
+                const product = csvData.flat().reduce((acc, val) => acc * val, 1);
+
+                // Resolve with the product
+                resolve(product);
+                console.log(`Matrix Output: ${product}`);
+            });
+        });
+    }
+
+    async sum(file: Express.Multer.File): Promise<number> {
+        return new Promise((resolve) => {
+            if (!file || !file.buffer) {
+                throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
+            }
+    
+            const csvData: number[][] = [];
+            const fileContent = file.buffer.toString();
+    
+            // Parse CSV content
+            parse(fileContent, { cast: true, columns: false }, (err, data) => {
+                if (err) {
+                    console.error("Error parsing CSV content:", err);
+                    throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+    
+                data.forEach((row) => {
+                    const numericRow = row.map(Number);
+                    csvData.push(numericRow);
+                });
+    
+                // Calculate the sum of integers in the matrix
+                const sum = csvData.flat().reduce((acc, val) => acc + val, 0);
+    
+                // Resolve with the sum
+                resolve(sum);
+                console.log(`Matrix Output: ${sum}`);
+            });
+        });
+    }
 }
