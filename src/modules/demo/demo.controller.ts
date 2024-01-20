@@ -55,4 +55,16 @@ export class DemoController {
             statusCode: HttpStatus.OK,
         });
     }
+
+    @Post("invert")
+    @ApiFile("file")
+    async invert(@UploadedFile(ParseFile) file: Express.Multer.File, @Res() res: Response) {
+        const result = await this.demoService.invert(file);
+
+        return res.status(HttpStatus.OK).json({
+            message: "record created successfully",
+            data: result,
+            statusCode: HttpStatus.OK,
+        });
+    }
 }

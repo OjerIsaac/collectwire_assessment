@@ -6,38 +6,35 @@ export class DemoService {
     constructor() {}
 
     async echo(file: Express.Multer.File): Promise<string> {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             if (!file || !file.buffer) {
                 throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
             }
 
-            const csvData: string[] = [];
+            const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
             // Parse CSV content
-            let isFirstRow = true;
-            parse(fileContent, { columns: true })
-                .on("data", (row) => {
-                    // console.log('CSV Row:', row);
-                    const rowString = Object.values(row).join(",");
-                    if (isFirstRow) {
-                        csvData.push(Object.keys(row).join(","));
-                        isFirstRow = false;
-                    }
-                    csvData.push(rowString);
-                })
-                .on("end", () => {
-                    // Resolve with the matrix string
-                    const matrixString = csvData.join("\n");
-                    console.log(`Matrix result:`);
-                    console.log(matrixString);
-
-                    resolve(matrixString);
-                })
-                .on("error", (err) => {
+            parse(fileContent, { cast: true, columns: false }, async (err, data) => {
+                if (err) {
                     console.error("Error parsing CSV content:", err);
                     throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                data.forEach((row) => {
+                    const numericRow = row.map(Number);
+                    csvData.push(numericRow);
                 });
+
+                // Convert the matrix to a string in matrix format
+                const matrixString = csvData.map((row) => row.join(",")).join("\n");
+
+                // Resolve with the matrix string
+                resolve(matrixString);
+
+                console.log(`Matrix result:`);
+                console.log(matrixString);
+            });
         });
     }
 
@@ -132,5 +129,49 @@ export class DemoService {
                 console.log(`Matrix Output: ${flatten}`);
             });
         });
+    }
+
+    async invert(file: Express.Multer.File): Promise<string> {
+        return new Promise(async (resolve) => {
+            if (!file || !file.buffer) {
+                throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
+            }
+
+            const csvData: number[][] = [];
+            const fileContent = file.buffer.toString();
+
+            // Parse CSV content
+            parse(fileContent, { cast: true, columns: false }, async (err, data) => {
+                if (err) {
+                    console.error("Error parsing CSV content:", err);
+                    throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                data.forEach((row) => {
+                    const numericRow = row.map(Number);
+                    csvData.push(numericRow);
+                });
+
+                // Transpose the matrix
+                try {
+                    const transposedMatrix = await this.transposeMatrix(csvData);
+
+                    // Convert the transposed matrix to a string
+                    const matrixString = transposedMatrix.map((row) => row.join(",")).join("\n");
+
+                    // Resolve with the matrix string
+                    resolve(matrixString);
+
+                    console.log(`Matrix result:`);
+                    console.log(matrixString);
+                } catch (error) {
+                    throw error;
+                }
+            });
+        });
+    }
+
+    private async transposeMatrix(matrix: number[][]): Promise<number[][]> {
+        return matrix[0].map((_, colIndex) => matrix.map((row) => row[colIndex]));
     }
 }
