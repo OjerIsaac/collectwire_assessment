@@ -102,4 +102,35 @@ export class DemoService {
             });
         });
     }
+
+    async flatten(file: Express.Multer.File): Promise<string> {
+        return new Promise((resolve) => {
+            if (!file || !file.buffer) {
+                throw new HttpException("Invalid CSV file", HttpStatus.BAD_REQUEST);
+            }
+
+            const csvData: number[][] = [];
+            const fileContent = file.buffer.toString();
+
+            // Parse CSV content
+            parse(fileContent, { cast: true, columns: false }, (err, data) => {
+                if (err) {
+                    console.error("Error parsing CSV content:", err);
+                    throw new HttpException("Error parsing CSV content", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                data.forEach((row) => {
+                    const numericRow = row.map(Number);
+                    csvData.push(numericRow);
+                });
+
+                // Flatten the matrix and create a one-line string
+                const flatten = csvData.flat().join(",");
+
+                // Resolve with the matrix string
+                resolve(flatten);
+                console.log(`Matrix Output: ${flatten}`);
+            });
+        });
+    }
 }
