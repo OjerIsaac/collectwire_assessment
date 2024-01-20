@@ -14,7 +14,6 @@ export class DemoService {
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
-            // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, async (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
@@ -27,13 +26,12 @@ export class DemoService {
                 });
 
                 // Convert the matrix to a string in matrix format
-                const matrixString = csvData.map((row) => row.join(",")).join("\n");
+                const echo = csvData.map((row) => row.join(",")).join("\n");
 
-                // Resolve with the matrix string
-                resolve(matrixString);
+                resolve(echo);
 
                 console.log(`Matrix result:`);
-                console.log(matrixString);
+                console.log(echo);
             });
         });
     }
@@ -47,7 +45,6 @@ export class DemoService {
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
-            // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
@@ -62,7 +59,6 @@ export class DemoService {
                 // Calculate the product of integers in the matrix
                 const product = csvData.flat().reduce((acc, val) => acc * val, 1);
 
-                // Resolve with the product
                 resolve(product);
                 console.log(`Matrix Output: ${product}`);
             });
@@ -78,7 +74,6 @@ export class DemoService {
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
-            // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
@@ -93,7 +88,6 @@ export class DemoService {
                 // Calculate the sum of integers in the matrix
                 const sum = csvData.flat().reduce((acc, val) => acc + val, 0);
 
-                // Resolve with the sum
                 resolve(sum);
                 console.log(`Matrix Output: ${sum}`);
             });
@@ -109,7 +103,6 @@ export class DemoService {
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
-            // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
@@ -124,7 +117,6 @@ export class DemoService {
                 // Flatten the matrix and create a one-line string
                 const flatten = csvData.flat().join(",");
 
-                // Resolve with the matrix string
                 resolve(flatten);
                 console.log(`Matrix Output: ${flatten}`);
             });
@@ -140,7 +132,6 @@ export class DemoService {
             const csvData: number[][] = [];
             const fileContent = file.buffer.toString();
 
-            // Parse CSV content
             parse(fileContent, { cast: true, columns: false }, async (err, data) => {
                 if (err) {
                     console.error("Error parsing CSV content:", err);
@@ -152,14 +143,12 @@ export class DemoService {
                     csvData.push(numericRow);
                 });
 
-                // Transpose the matrix
                 try {
                     const transposedMatrix = await this.transposeMatrix(csvData);
 
                     // Convert the transposed matrix to a string
                     const matrixString = transposedMatrix.map((row) => row.join(",")).join("\n");
 
-                    // Resolve with the matrix string
                     resolve(matrixString);
 
                     console.log(`Matrix result:`);
